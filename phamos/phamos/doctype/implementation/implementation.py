@@ -10,7 +10,7 @@ from frappe.utils import today
 class Implementation(Document):
 	def before_save(self):
 		self.add_delivered_hrs()
-		self.update_status_information()
+		self.add_resource_planning()
 
 	def add_delivered_hrs(self):
 		if self.sales_order_status_information:
@@ -25,39 +25,48 @@ class Implementation(Document):
 						total_hours += dn.get("qty", 0)
 						row.delivered_total_hrs = total_hours
 						row.remaining_hrs = row.total_hrs - row.delivered_total_hrs
-						
 
-	def update_status_information(self):
-		if self.status_information:
-			for row in self.status_information:
-				get_dates = [row.date for row in self.status_information]
-				if row.date == today():
-					self.status_information.remove(row)
-					frappe.db.commit()
-					self.append('status_information', {'maturity_level':self.maturity_level, 'mood':self.mood, 'forecast':self.forecast, 'status':self.status, 'date':today()})
-				elif row.date in get_dates:
-					self.status_information.remove(row)
-					frappe.db.commit()
-					self.append('status_information', {
-						'maturity_level':self.maturity_level, 
-						'mood':self.mood, 
-						'forecast':self.forecast, 
-						'status':self.status, 
-						'date':today()})
-				else:
-					self.append('status_information', {
-						'maturity_level':self.maturity_level, 
-						'mood':self.mood, 
-						'forecast':self.forecast, 
-						'status':self.status, 
-						'date':today()})
-		else:
-			self.append('status_information', {
-				'maturity_level':self.maturity_level, 
-				'mood':self.mood, 
-				'forecast':self.forecast, 
-				'status':self.status, 
-				'date':today()})
+	def add_resource_planning(self):
+		if self.name:
+			total_time_spent = """SELECT ts.employee AS employee, ts.customer AS customer, SUM(tsd.hours) AS total_working_hours FROM  `tabTimesheet` ts JOIN `tabTimesheet Detail` tsd ON ts.name = tsd.parent WHERE ts.docstatus != 2 and tsd.custom_implementation = '{0}' GROUP BY ts.employee ORDER BY ts.employee""".format(self.name)
+
+			total_time = frappe.db.sql(total_time_spent, as_dict=True)
+
+			total_billable_time = """SELECT ts.employee AS employee, ts.customer AS customer, SUM(tsd.hours) AS billable_time FROM  `tabTimesheet` ts JOIN `tabTimesheet Detail` tsd ON ts.name = tsd.parent WHERE ts.docstatus != 2 and tsd.custom_implementation = '{0}' and tsd.is_billable = 1 GROUP BY ts.employee ORDER BY ts.employee""".format(self.name)
+			billable_time = frappe.db.sql(total_billable_time, as_dict =1)
+
+			if self.resource_planning:
+				(self.resource_planning).clear()
+				for row in total_time:
+					for row1 in billable_time:
+						if row['employee'] == row1['employee']:
+							non_billable = int(row.get('total_working_hours')) - int(row1.get('billable_time'))
+							if non_billable >0:
+								ratio = int(row1.get('billable_time'))/int(non_billable)
+							else:
+								ratio = 0
+							self.append('resource_planning',{
+								'employee':row.get('employee'),
+								'total_time_spent':row.get('total_working_hours'),
+								'total_billable_time_spent':row1.get('billable_time'),
+								'ratio_of_billable_to_non_billable_time_spent':ratio
+								})
+			else:
+				for row in total_time:
+					for row1 in billable_time:
+						if row['employee'] == row1['employee']:
+							non_billable = int(row.get('total_working_hours')) - int(row1.get('billable_time'))
+							if non_billable >0:
+								ratio = int(row1.get('billable_time'))/int(non_billable)
+							else:
+								ratio = 0
+							self.append('resource_planning',{
+								'employee':row.get('employee'),
+								'total_time_spent':row.get('total_working_hours'),
+								'total_billable_time_spent':row1.get('billable_time'),
+								'ratio_of_billable_to_non_billable_time_spent':ratio
+								})
+
 
 
 

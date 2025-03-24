@@ -3,7 +3,8 @@
 frappe.ui.form.on("Implementation", {
 	setup:function(frm){
 		if(!frm.is_new()){
-			add_row_to_sales_order(frm)
+			console.log()
+			//add_row_to_sales_order(frm)
 			frappe.call({
 				method: "phamos.phamos.doctype.implementation.implementation.get_financial_history",
 				args: {'name':frm.doc.name,'customer':frm.doc.customer},
@@ -145,7 +146,7 @@ function add_row_to_sales_order(frm){
 }
 
 
-frappe.ui.form.on("Sales Order Status Information", {
+/*frappe.ui.form.on("Sales Order Status Information", {
 	setup:function(frm){
 		if(!frm.is_new()){
 			frappe.call({
@@ -163,4 +164,4 @@ frappe.ui.form.on("Sales Order Status Information", {
 		}
 	}
 });
-
+*/
