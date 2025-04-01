@@ -5,9 +5,5 @@
 from frappe.model.document import Document
 
 
-<<<<<<< HEAD
-class ResourcePlanning(Document):
-=======
 class Resourceplanning(Document):
->>>>>>> c2ce6e61bfedd7a2c71cac42a33dc9d22f5a531c
 	pass
