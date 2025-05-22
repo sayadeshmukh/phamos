@@ -36,7 +36,7 @@ class TimesheetRecord(Document):
 		timesheet = frappe.new_doc("Timesheet")
 		timesheet.update(
 			{
-				"project": self.project,
+				"parent_project": self.project,
 				"customer": self.customer,
 				"note": description,
 				"employee": self.employee

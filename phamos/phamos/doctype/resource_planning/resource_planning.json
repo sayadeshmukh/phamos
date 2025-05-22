@@ -1,52 +1,11 @@
 {
  "actions": [],
  "allow_rename": 1,
-<<<<<<< HEAD
- "creation": "2025-03-24 11:50:07.425111",
-=======
  "creation": "2025-03-21 14:02:34.902523",
->>>>>>> c2ce6e61bfedd7a2c71cac42a33dc9d22f5a531c
  "doctype": "DocType",
  "editable_grid": 1,
  "engine": "InnoDB",
  "field_order": [
-<<<<<<< HEAD
-  "employee",
-  "total_billable_time_spent",
-  "column_break_wmjp",
-  "total_time_spent",
-  "ratio_of_billable_to_non_billable_time_spent"
- ],
- "fields": [
-  {
-   "fieldname": "employee",
-   "fieldtype": "Link",
-   "in_list_view": 1,
-   "label": "Employee",
-   "options": "Employee"
-  },
-  {
-   "fieldname": "total_billable_time_spent",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Total billable time spent"
-  },
-  {
-   "fieldname": "column_break_wmjp",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "total_time_spent",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Total Time spent"
-  },
-  {
-   "fieldname": "ratio_of_billable_to_non_billable_time_spent",
-   "fieldtype": "Data",
-   "in_list_view": 1,
-   "label": "Ratio of billable to non-billable time spent"
-=======
   "month_and_year",
   "billable_time_spent",
   "non_billable_time_spent",
@@ -55,19 +14,19 @@
  "fields": [
   {
    "fieldname": "billable_time_spent",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Billable Time spent"
   },
   {
    "fieldname": "total_time",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Total Time"
   },
   {
    "fieldname": "non_billable_time_spent",
-   "fieldtype": "Data",
+   "fieldtype": "Float",
    "in_list_view": 1,
    "label": "Non Billable Time spent"
   },
@@ -76,25 +35,18 @@
    "fieldtype": "Data",
    "in_list_view": 1,
    "label": "Month and year"
->>>>>>> c2ce6e61bfedd7a2c71cac42a33dc9d22f5a531c
   }
  ],
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
-<<<<<<< HEAD
- "modified": "2025-03-24 11:52:16.384558",
- "modified_by": "Administrator",
- "module": "Phamos",
- "name": "Resource Planning",
-=======
- "modified": "2025-03-26 11:32:16.257431",
+ "modified": "2025-05-20 19:33:27.352659",
  "modified_by": "Administrator",
  "module": "Phamos",
  "name": "Resource planning",
->>>>>>> c2ce6e61bfedd7a2c71cac42a33dc9d22f5a531c
  "owner": "Administrator",
  "permissions": [],
+ "row_format": "Dynamic",
  "sort_field": "modified",
  "sort_order": "DESC",
  "states": []

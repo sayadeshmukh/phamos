@@ -98,7 +98,9 @@ class Implementation(Document):
 						
 
 @frappe.whitelist()
-def get_financial_history(name, customer):
+def get_financial_history(name, customer = None):
+	if not customer:
+		return {}
 	get_projects = frappe.db.get_all('Project', {'custom_implementation':name}, 'name')
 	
 	get_project_list = [item.name for item in get_projects]
@@ -119,13 +121,13 @@ def get_financial_history(name, customer):
 
 		
 		if len(get_so_list) == 1:
-			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order = '{0}' and status != 'Cancelled' """.format(get_so_list[0]), as_list=1)
+			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order = '{0}' and dn.status in ('Completed','To Bill','Draft') """.format(get_so_list[0]), as_list=1)
 			if get_dn_hrs[0][0] != None:
 				get_so_hrs['dn_qty'] = get_dn_hrs[0][0]
 			else:
 				get_so_hrs['dn_qty'] = 0
 		elif len(get_so_list) > 1:
-			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order in {0} and status != 'Cancelled' """.format(tuple(get_so_list), get_project_list[0]), as_list=1)
+			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order in {0} and dn.status in ('Completed','To Bill','Draft') """.format(tuple(get_so_list), get_project_list[0]), as_list=1)
 			
 			if get_dn_hrs[0][0] != None:
 				get_so_hrs['dn_qty'] = get_dn_hrs[0][0]
@@ -138,7 +140,7 @@ def get_financial_history(name, customer):
 		get_so_hrs['remaining_hrs'] = int(get_so_hrs['sales_order_qty']) - int(get_so_hrs['dn_qty'])
 		
 
-		timesheet_hrs = frappe.db.sql("""SELECT sum(td.hours) as timesheet_hrs from `tabTimesheet` t join `tabTimesheet Detail` td on t.name = td.parent where td.is_billable = 1 and t.docstatus = 0 and td.project = '{0}' and td.custom_implementation = '{1}' """.format(get_project_list[0], name), as_list=1, debug=1)
+		timesheet_hrs = frappe.db.sql("""SELECT sum(td.hours) as timesheet_hrs from `tabTimesheet` t join `tabTimesheet Detail` td on t.name = td.parent where td.is_billable = 1 and t.docstatus = 0 and td.project = '{0}' and td.custom_implementation = '{1}' and t.custom_delivery_note is null """.format(get_project_list[0], name), as_list=1, debug=1)
 
 		if timesheet_hrs[0][0] != None:
 			get_so_hrs['timesheet_hrs'] = timesheet_hrs[0][0]
@@ -171,13 +173,13 @@ def get_financial_history(name, customer):
 			pass
 
 		if len(get_so_list) == 1:
-			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order = '{0}' and status != 'Cancelled' """.format(get_so_list[0], tuple(get_project_list)), as_list=1)
+			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order = '{0}' and dn.status in ('Draft' ,'Completed','To Bill') """.format(get_so_list[0], tuple(get_project_list)), as_list=1)
 			if get_dn_hrs[0][0] != None:
 				get_so_hrs['dn_qty'] = get_dn_hrs[0][0]
 			else:
 				get_so_hrs['dn_qty'] = 0
 		elif len(get_so_list) > 1:
-			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order in {0} and status != 'Cancelled' """.format(tuple(get_so_list), tuple(get_project_list)), as_list=1)
+			get_dn_hrs = frappe.db.sql("""SELECT sum(dni.qty) as dn_qty from `tabDelivery Note` dn join `tabDelivery Note Item` dni on dn.name = dni.parent where dni.against_sales_order in {0} and dn.status in ('Completed','To Bill','Draft') """.format(tuple(get_so_list), tuple(get_project_list)), as_list=1)
 			
 			if get_dn_hrs[0][0] != None:
 				get_so_hrs['dn_qty'] = get_dn_hrs[0][0]
@@ -189,7 +191,7 @@ def get_financial_history(name, customer):
 		get_so_hrs['remaining_hrs'] = int(get_so_hrs['sales_order_qty']) - int(get_so_hrs['dn_qty'])
 		
 
-		timesheet_hrs = frappe.db.sql("""SELECT sum(td.hours) as timesheet_hrs from `tabTimesheet` t join `tabTimesheet Detail` td on t.name = td.parent where td.is_billable = 1 and t.docstatus = 0 and td.project in {0} and custom_implementation = '{1}'  """.format(tuple(get_project_list), name), as_list=1, debug=1)
+		timesheet_hrs = frappe.db.sql("""SELECT sum(td.hours) as timesheet_hrs from `tabTimesheet` t join `tabTimesheet Detail` td on t.name = td.parent where td.is_billable = 1 and t.docstatus = 0 and td.project in {0} and td.custom_implementation = '{1}' and t.custom_delivery_note is NULL """.format(tuple(get_project_list), name), as_list=1, debug=1)
 
 		if timesheet_hrs[0][0] != None:
 			get_so_hrs['timesheet_hrs'] = timesheet_hrs[0][0]
@@ -212,6 +214,14 @@ def get_financial_history(name, customer):
 		return get_so_hrs
 
 
+@frappe.whitelist()
+def are_all_projects_closed(implementation_name):
+    linked_projects = frappe.get_all('Project', filters={'custom_implementation': implementation_name}, fields=['status'])
+    
+    for proj in linked_projects:
+        if proj.status not in ['Completed', 'Cancelled']:
+            return False
+    return True
 
 
 @frappe.whitelist()
