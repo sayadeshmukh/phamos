@@ -9,8 +9,14 @@ from frappe.utils import today
 
 class Implementation(Document):
 	def before_save(self):
+		if self.resource_planning_prediction:
+			self.resource_planning_prediction.sort(
+				key=lambda x: x.month_and_year or ""
+			)
 		self.add_delivered_hrs()
 		self.add_resource_planning()
+		self.add_status_history()
+
 
 	def add_delivered_hrs(self):
 		if self.sales_order_status_information:
@@ -95,6 +101,32 @@ class Implementation(Document):
 								'billable_time_spent':row1.get('billable_time'),
 								'ratio_of_billable_to_non_billable_time_spent':ratio
 								})
+	
+
+	def add_status_history(self):
+		date = today()
+		if self.status_updates:
+			for d in self.status_updates:
+				if d.date == today():
+					d.status = self.status
+					d.maturity_level = self.maturity_level
+					d.forecast = self.forecast
+				else:
+					self.append("status_updates", {
+						"date": today(),
+						"status":self.status,
+						"maturity_level": self.maturity_level,
+						"forecast": self.forecast
+					})
+		else:
+			self.append("status_updates", {
+				"date": today(),
+				"status":self.status,
+				"maturity_level": self.maturity_level,
+				"forecast": self.forecast
+			})
+
+
 						
 
 @frappe.whitelist()
