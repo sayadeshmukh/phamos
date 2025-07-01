@@ -1,0 +1,77 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-07-01 12:29:17.263570",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "gitlab_url",
+  "default_project_id",
+  "verify_ssl_certificates",
+  "column_break_kjfz",
+  "personal_access_token",
+  "gitlab_api_version"
+ ],
+ "fields": [
+  {
+   "fieldname": "gitlab_url",
+   "fieldtype": "Data",
+   "in_list_view": 1,
+   "label": "Gitlab URL",
+   "options": "URL",
+   "reqd": 1
+  },
+  {
+   "fieldname": "default_project_id",
+   "fieldtype": "Link",
+   "label": "Default Project ID",
+   "options": "Project"
+  },
+  {
+   "default": "0",
+   "fieldname": "verify_ssl_certificates",
+   "fieldtype": "Check",
+   "label": "Verify SSL Certificates"
+  },
+  {
+   "fieldname": "column_break_kjfz",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "personal_access_token",
+   "fieldtype": "Password",
+   "in_list_view": 1,
+   "label": "Personal Access Token",
+   "reqd": 1
+  },
+  {
+   "fieldname": "gitlab_api_version",
+   "fieldtype": "Select",
+   "label": "Gitlab API Version",
+   "options": "v3\nv4"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2025-07-01 12:33:52.906784",
+ "modified_by": "Administrator",
+ "module": "Phamos",
+ "name": "Gitlab Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "print": 1,
+   "read": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}
