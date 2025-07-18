@@ -369,6 +369,10 @@ frappe.pages["project-action-panel"].on_page_load = function (wrapper) {
             // Set the width using CSS
             dialog.$wrapper.find(".modal-dialog").css("max-width", "900px");
             dialog.show();
+            // Auto-focus "What I did" field after slight delay
+            setTimeout(() => {
+              dialog.fields_dict.result.$wrapper.find("textarea").focus();
+            }, 300); // delay ensures DOM is ready
           }
         );
       }
